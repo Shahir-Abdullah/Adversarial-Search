@@ -6,3 +6,4 @@ last side gets one point.
 4. One of the two player is human who will play againt the Artificial Intelligence which is designed based on Alpha Beta Minmax algorithm. 
 5. The AI is the max player here. The first one to make a move. 
 6. Written in #Python and GUI is made by the python library #tkinter 
+7. Soon we will use more options
