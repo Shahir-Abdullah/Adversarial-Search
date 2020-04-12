@@ -1,4 +1,113 @@
 from time import time 
+import tkinter as tk 
+
+window = tk.Tk()
+#title of the window
+window.title("Dot Box Game")
+#resizable and responsive window
+window.rowconfigure(0, minsize=500, weight=1) #Take a look at line 6 more closely. The minsize parameter of .rowconfigure() is set to 800 and weight is set to 1. The first argument is 0, which sets the height of the first row to 800 pixels and makes sure that the height of the row grows proportionally to the height of the window. There’s only one row in the application layout, so these settings apply to the entire window.
+window.columnconfigure(1, minsize=800, weight=1) #Here, you use .columnconfigure() to set the width and weight attributes of the column with index 1 to 800 and 1, respectively:. Remember, row and column indices are zero-based, so these settings apply only to the second column. By configuring just the second column, the text box will expand and contract naturally when the window is resized, while the column containing the buttons will remain at a fixed width.
+#border effects
+border_effects = {
+    "flat": tk.FLAT,
+    "sunken": tk.SUNKEN,
+    "raised": tk.RAISED,
+    "groove": tk.GROOVE,
+    "ridge": tk.RIDGE,
+}
+#colors
+unclicked_bar_color = "#0DA6AB"
+clicked_bar_color = "#1EE0E6"
+box_complete_color_by_AI = "#0D80A4"
+box_complete_color_by_Human = "#8628AD"
+box_color = "#F2F5F7"
+enter_btn_color = "#17B974"
+label_color="#FFFFFF"
+frame_color = "#2471A3"
+
+#taskbar frame
+frame_taskbar = tk.Frame(
+    master=window,
+    relief=tk.GROOVE,
+    bg = frame_color,
+    borderwidth=2
+)
+
+#labels for taskbar
+lbl_game_name=tk.Label(master=frame_taskbar, text="Dot Box")
+lbl_player1=tk.Label(master=frame_taskbar, text="Player 1 : AI ")
+lbl_points_player1=tk.Label(master=frame_taskbar, text="Points : ")
+lbl_point_table_player1=tk.Label(master=frame_taskbar, text=" ")
+lbl_player2=tk.Label(master=frame_taskbar, text="Player 2 : Human ")
+lbl_points_player2=tk.Label(master=frame_taskbar, text="Points : ")
+lbl_point_table_player2=tk.Label(master=frame_taskbar, text=" ")
+lbl_game_result=tk.Label(master=frame_taskbar, text=" ")
+
+#geometry manager to set up the taskbar frame 
+lbl_game_name.grid(row=0, column=0, sticky="wn", padx=5, pady=5)
+lbl_player1.grid(row=1, column=0, sticky="w", padx=5, pady=5)
+lbl_points_player1.grid(row=2, column=0, sticky="w", padx=5, pady=5)
+lbl_point_table_player1.grid(row=2, column=1, sticky="w", padx=5, pady=5)
+lbl_player2.grid(row=3, column=0, sticky="w", padx=5, pady=5)
+lbl_points_player2.grid(row=4, column=0, sticky="w", padx=5, pady=5)
+lbl_point_table_player2.grid(row=4, column=1, sticky="w", padx=5, pady=5)
+lbl_game_result.grid(row=5, column=0, sticky="w", padx=5, pady=5)
+
+#game frame
+box_container = tk.Frame(
+    master=window,
+    relief=tk.SUNKEN,
+    borderwidth=3
+)
+def enter_row_column():
+    r = 5
+    c = 5
+
+    n = r*c  
+    if n >= 2:
+        n = (n*4) - (((n-2)/2)*3) - (n%2) - 1
+    else:
+        n = 4 
+
+    total_bars = n 
+    r = r + (r + 1)
+    c = c + (c + 1)
+
+    for i in range(0, r):
+        for j in range(0, c):
+            if i%2 == 0 and j%2 == 1:
+                #horizontal bar
+                horizontal_bar = tk.Button(
+                    master=box_container,
+                    text=str(total_bars),
+                    fg= clicked_bar_color,
+                    bg= unclicked_bar_color,
+                    width="8",
+                    height="1"
+                )
+                
+                horizontal_bar.grid(row=i, column=j, sticky="nw", pady=1)
+                total_bars -= 1
+            elif i%2 == 1 and j%2 == 0:
+                #vertical bar 
+                vertical_bar = tk.Button(
+                    master=box_container,
+                    text=str(total_bars),
+                    fg= clicked_bar_color,
+                    bg= unclicked_bar_color,
+                    width="1",
+                    height="4"
+                )
+                vertical_bar.grid(row=i, column=j, sticky="w", padx=2)
+                total_bars -= 1
+            elif i%2==1 and j%2==1:
+                #box
+                box = tk.Label(master=box_container, bg=box_color, fg="white")
+                box.grid(row=i, column=j, sticky="wnes", padx=1)
+def draw_GUI():
+    frame_taskbar.grid(row=0, column=0, sticky="e", padx=5, pady=5)
+    enter_row_column()
+    box_container.grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
 MIN = -1000
 MAX = 1000
@@ -102,18 +211,97 @@ bars = [
         Bar(9),
         Bar(10),
         Bar(11),
-        Bar(12)
+        Bar(12),
+        Bar(13),
+        Bar(14),
+        Bar(15),
+        Bar(16), 
+        Bar(17),
+        Bar(18),
+        Bar(19),
+        Bar(20),
+        Bar(21),
+        Bar(22),
+        Bar(23),
+        Bar(24),
+        Bar(25),
+        Bar(26),
+        Bar(27),
+        Bar(28),
+        Bar(29),
+        Bar(30), 
+        Bar(31),
+        Bar(32),
+        Bar(33),
+        Bar(34),
+        Bar(35),
+        Bar(36),
+        Bar(37),
+        Bar(38),
+        Bar(39),
+        Bar(40),
+        Bar(41),
+        Bar(42),
+        Bar(43),
+        Bar(44),
+        Bar(45),
+        Bar(46),
+        Bar(47),
+        Bar(48),
+        Bar(49),
+        Bar(50),
+        Bar(51),
+        Bar(52),
+        Bar(53),
+        Bar(54),
+        Bar(55),
+        Bar(56),
+        Bar(57),
+        Bar(58),
+        Bar(59),
+        Bar(60)
+
     ]
-# 4 boxes of the board
-b1 = Box(1, bars[0], bars[1], bars[2], bars[3])
-b2 = Box(2, bars[2], bars[4], bars[5], bars[6])
-b3 = Box(3, bars[7], bars[3], bars[8],bars[9])
-b4 = Box(4, bars[6], bars[8], bars[10], bars[11])
+# 25 boxes of the board
+b1 = Box(1, bars[0], bars[5], bars[6], bars[11])
+b2 = Box(2, bars[1], bars[6], bars[7], bars[12])
+b3 = Box(3, bars[2], bars[7], bars[8],bars[13])
+b4 = Box(4, bars[3], bars[8], bars[9], bars[14])
+b5 = Box(5, bars[4], bars[9], bars[10], bars[15])
+
+b6 = Box(6, bars[11], bars[16], bars[17], bars[22])
+b7 = Box(7, bars[12], bars[17], bars[18], bars[23])
+b8 = Box(8, bars[13], bars[18], bars[19], bars[24])
+b9 = Box(9, bars[14], bars[19], bars[20], bars[25])
+b10 = Box(10, bars[15], bars[20], bars[21], bars[26])
+
+b11 = Box(11, bars[22], bars[27], bars[28], bars[33])
+b12 = Box(12, bars[23], bars[28], bars[29], bars[34])
+b13 = Box(13, bars[24], bars[29], bars[30], bars[35])
+b14 = Box(14, bars[25], bars[30], bars[31], bars[36])
+b15 = Box(15, bars[26], bars[31], bars[32], bars[37])
+
+b16 = Box(16, bars[33], bars[38], bars[39], bars[44])
+b17 = Box(17, bars[34], bars[39], bars[40], bars[45])
+b18 = Box(18, bars[35], bars[40], bars[41], bars[46])
+b19 = Box(19, bars[36], bars[41], bars[42], bars[47])
+b20 = Box(20, bars[37], bars[42], bars[43], bars[48])
+
+b21 = Box(21, bars[44], bars[49], bars[50], bars[55])
+b22 = Box(22, bars[45], bars[50], bars[51], bars[56])
+b23 = Box(23, bars[46], bars[51], bars[52], bars[57])
+b24 = Box(24, bars[47], bars[52], bars[53], bars[58])
+b25 = Box(25, bars[48], bars[53], bars[54], bars[59])
+
+
 
 #board 
 board = ([
-    [b1, b2],
-    [b3, b4]
+    [b1, b2, b3, b4, b5],
+    [b6, b7, b8, b9, b10],
+    [b11, b12, b13, b14, b15],
+    [b16, b17, b18, b19, b20],
+    [b21, b22, b23, b24, b25]
 ])
 # function that calculate how many moves are left 
 def moves_left(board):
@@ -149,7 +337,7 @@ def board_evaluation(board, player, opponent):
 
 
 '''
-the famous minimax alpha beta prunin. 
+the famous minimax alpha beta pruning. 
 maximizer wants to increase the alpha as much as it can without crossing the beta from previous node. 
 minimizer wants to decrease the beta as much as it can without going below alpha from previous node. 
 '''
@@ -226,7 +414,12 @@ def findBestMove(board, player, opponent):
 
     return bestBar.id # returns the bar that gives the best optimal move 
                         
-    
+def randomMove(board, player, opponent):
+    for box_list in board:
+        for box in box_list:
+            for bar in box.bar_list:
+                if bar.click_status == 0:
+                    return bar.id   
     
 # state class. which has a board, and the next state generation function 
 class State(object):
@@ -277,15 +470,25 @@ class State(object):
 # main function, here the input is performed each turn and after the moves it compiles the result
 if __name__ == "__main__":
 
+    draw_GUI()
+    #without mainloop, nothing will be shown
+    window.mainloop()
+
     s = State(board, bars)
     agent1 = Agent(input("player 1 : "))
     agent2 = Agent(input("player 2 : "))
     turn = True 
+    i = 0
     while True:
 
         if turn == True: # turn value tells whose turn it is. normally it will flip each time except when a player gets a box complete and then he can again make a move. that's when turn bool doesn't get flipped and lets the agent take a move again
-            a1 = findBestMove(board, agent1, agent2) # maximizer which here is the AI 
-            a1 = int(a1)
+            if i <= 10:
+                a1 = randomMove(board, agent1, agent2)
+                a1 = int(a1)
+                i += 1
+            else:
+                a1 = findBestMove(board, agent1, agent2) # maximizer which here is the AI 
+                a1 = int(a1)
             print(a1)
             agent_prev_score = agent1.total_score(board)
             s, board = s.next_state(a1, agent1)
