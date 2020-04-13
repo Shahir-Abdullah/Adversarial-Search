@@ -18,3 +18,8 @@ last side gets one point.
 7. The Human Player is the max player here. The first one to make a move. 
 8. Written in #Python and GUI is made by the python library #tkinter 
 
+# Instructions :
+1. download or clone the project. 
+2. cd Adversarial_Search.
+3. type 'python3 alpha_beta.py' on the command line.
+
