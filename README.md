@@ -13,7 +13,7 @@ last side gets one point.
 ![](Screenshots/game_window_1.png)
 
 6. Human and AI will give a move in each turn. Except when one fills a box, player will move again. 
-![](Screenshots/game_window_2)
+![](Screenshots/game_window_2.png)
 
 7. The Human Player is the max player here. The first one to make a move. 
 8. Written in #Python and GUI is made by the python library #tkinter 
