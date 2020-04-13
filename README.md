@@ -1,4 +1,4 @@
-# Adversarial-Search
+# Dot Box Game using alpha beta pruning algorithm of Adversarial-Searching 
 1. I used Alpha beta pruning in this game.
 
 2. It is the famous dot box game where player selects a side of a box each turn and the last one to complete a box by choosing the 
