@@ -8,6 +8,8 @@ a2 = 0
 turn = True 
 clicked = False 
 random_moves = 4
+agent1 = None 
+agent2 = None 
 i = 0
 #colors
 clicked_bar_color = "#0DA6AB"
@@ -23,8 +25,8 @@ window = tk.Tk()
 #title of the window
 window.title("Dot Box Game")
 #resizable and responsive window
-window.rowconfigure(0, minsize=500, weight=1) #Take a look at line 6 more closely. The minsize parameter of .rowconfigure() is set to 800 and weight is set to 1. The first argument is 0, which sets the height of the first row to 800 pixels and makes sure that the height of the row grows proportionally to the height of the window. There’s only one row in the application layout, so these settings apply to the entire window.
-window.columnconfigure(1, minsize=700, weight=1) #Here, you use .columnconfigure() to set the width and weight attributes of the column with index 1 to 800 and 1, respectively:. Remember, row and column indices are zero-based, so these settings apply only to the second column. By configuring just the second column, the text box will expand and contract naturally when the window is resized, while the column containing the buttons will remain at a fixed width.
+window.rowconfigure([0,1], minsize=50, weight=1) #Take a look at line 6 more closely. The minsize parameter of .rowconfigure() is set to 800 and weight is set to 1. The first argument is 0, which sets the height of the first row to 800 pixels and makes sure that the height of the row grows proportionally to the height of the window. There’s only one row in the application layout, so these settings apply to the entire window.
+window.columnconfigure(1, minsize=60, weight=1) #Here, you use .columnconfigure() to set the width and weight attributes of the column with index 1 to 800 and 1, respectively:. Remember, row and column indices are zero-based, so these settings apply only to the second column. By configuring just the second column, the text box will expand and contract naturally when the window is resized, while the column containing the buttons will remain at a fixed width.
 #border effects
 border_effects = {
     "flat": tk.FLAT,
@@ -41,23 +43,54 @@ frame_taskbar = tk.Frame(
     bg = frame_color,
     borderwidth=2
 )
+#entry section
+entry_frame = tk.Frame(
+    master=frame_taskbar,
+    relief = tk.SUNKEN,
+    borderwidth=3
+)
 
+#label for AI name entry
+lbl_ai = tk.Label(master=entry_frame, text="Enter AI's name : ")
+#entry for AI
+ent_ai = tk.Entry(master=entry_frame, width=10)
+#label for human name entry
+lbl_human = tk.Label(master=entry_frame, text="Enter your name : ")
+#entry for human name
+ent_human = tk.Entry(master=entry_frame, width=10)
+#button for agent's name input
+enter_button = tk.Button(
+    master = entry_frame,
+    text="Start",
+    bg = enter_btn_color,
+    fg = "white"
+)
+#geometry manager to set up entry frame
+lbl_ai.grid(row=0, column=0, sticky="nwse", padx=5, pady=5)
+ent_ai.grid(row=0, column=1, sticky="nwse", padx=5, pady=5)
+lbl_human.grid(row=1, column=0, sticky="nwse", padx=5, pady=5)
+ent_human.grid(row=1, column=1, sticky="nwse", padx=5, pady=5)
+enter_button.grid(row=2, column=1, sticky="sw", padx=5, pady=5)
 #labels for taskbar
 lbl_game_name=tk.Label(master=frame_taskbar, text="Dot Box")
-lbl_player1=tk.Label(master=frame_taskbar, text="Player 1 : AI")
+lbl_player1=tk.Label(master=frame_taskbar, text="Player 1 :")
+lbl_player1_name=tk.Label(master=frame_taskbar, text="AI")
 lbl_points_player1=tk.Label(master=frame_taskbar, text="Points :")
 lbl_point_table_player1=tk.Label(master=frame_taskbar, text=" ")
-lbl_player2=tk.Label(master=frame_taskbar, text="Player 2 : Human")
+lbl_player2=tk.Label(master=frame_taskbar, text="Player 2 :")
+lbl_player2_name=tk.Label(master=frame_taskbar, text="Human")
 lbl_points_player2=tk.Label(master=frame_taskbar, text="Points :")
 lbl_point_table_player2=tk.Label(master=frame_taskbar, text="           ")
 lbl_game_result=tk.Label(master=frame_taskbar, text="           ")
 
 #geometry manager to set up the taskbar frame 
-lbl_game_name.grid(row=0, column=0, sticky="wn", padx=5, pady=5)
+lbl_game_name.grid(row=0, column=0, sticky="wnes", padx=5, pady=5)
 lbl_player1.grid(row=1, column=0, sticky="w", padx=5, pady=5)
+lbl_player1_name.grid(row=1, column=1, sticky="e", padx=5, pady=5)
 lbl_points_player1.grid(row=2, column=0, sticky="w", padx=5, pady=5)
 lbl_point_table_player1.grid(row=2, column=1, sticky="we", padx=5, pady=5)
 lbl_player2.grid(row=3, column=0, sticky="w", padx=5, pady=5)
+lbl_player2_name.grid(row=3, column=1, sticky="e", padx=5, pady=5)
 lbl_points_player2.grid(row=4, column=0, sticky="w", padx=5, pady=5)
 lbl_point_table_player2.grid(row=4, column=1, sticky="we", padx=5, pady=5)
 lbl_game_result.grid(row=5, column=0, sticky="wens", padx=5, pady=5)
@@ -127,7 +160,23 @@ def enter_row_column():
                 gui_box.append(box)
                 box.grid(row=i, column=j, sticky="wnes", padx=1)
 
+def name_entry():
+    frame_taskbar.grid(row=0, column=0, sticky="en", padx=5, pady=5)
+    entry_frame.grid(row=6, column=0, sticky="nsew", padx=5, pady=5)
+    
+    
+    
+
 def draw_GUI():
+    global agent1
+    global agent2
+    agent1_name = ent_ai.get()
+    agent2_name = ent_human.get()
+    agent1 = Agent(agent1_name)
+    agent2 = Agent(agent2_name)
+    lbl_player1_name["text"] = agent1.name 
+    lbl_player2_name["text"] = agent2.name 
+
     frame_taskbar.grid(row=0, column=0, sticky="en", padx=5, pady=5)
     enter_row_column()
     box_container.grid(row=0, column=1, sticky="w", padx=5, pady=5)
@@ -494,8 +543,7 @@ class State(object):
         
         return self, self.board
 s = State(board, bars)
-agent1 = Agent(input("player 1 : "))
-agent2 = Agent(input("player 2 : "))
+
 #change bar color
 def change_color(id):
     for b in gui_bars:
@@ -566,16 +614,18 @@ def bar_click_human(id):
                #print("moves left ======> ", moves_left(board)) 
                  
     if moves_left(board) == 0: # compilation of the game result. 
-            lbl_game_result["text"] = "GAME OVER"
-            
+        lbl_game_result["text"] = "GAME OVER"
+    else:
+        lbl_game_result["text"] = "RUNNING"
     lbl_point_table_player1["text"] = str(agent1.total_score(board))
     lbl_point_table_player2["text"] = str(agent2.total_score(board))
     #print(id, "returned", turn)
 
+
 # main function
 if __name__ == "__main__":
-
-    draw_GUI()
+    enter_button["command"] = draw_GUI
+    name_entry()
     i = 0
     turn = True 
     #without mainloop, nothing will be shown
