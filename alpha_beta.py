@@ -8,7 +8,7 @@ MAX = 1000
 a2 = 0
 turn = True 
 clicked = False 
-random_moves = 5
+random_moves = 3
 agent1 = None 
 agent2 = None 
 i = 0
@@ -492,8 +492,8 @@ def findBestMove(board, player, opponent):
 def randomMove(board, player, opponent):
     for box_list in board:
         for box in box_list:
-            if box.bar_c.click_status == 0:
-                return box.bar_c.id    
+            if box.bar_a.click_status == 0:
+                return box.bar_a.id    
     
 # state class. which has a board, and the next state generation function 
 class State(object):
