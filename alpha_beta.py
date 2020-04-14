@@ -266,7 +266,7 @@ class Box(object):
                 return True, self.bar_d
         else:
             return False, None 
-            
+
     def undo_box_completer(self): # not needed right now, clears the box data
         self.completed_by = None   
     
@@ -397,8 +397,11 @@ def moves_left(board):
                 
         return moves 
     
-
-
+# bar finding function 
+def findBar(board, id):
+    for bar in bars:
+        if bar.id == id:
+            return bar 
 #evaluation function 
 def board_evaluation(board, player, opponent):
     if player.total_score(board) > opponent.total_score(board): # win
@@ -587,8 +590,10 @@ def bar_click_human(id):
     global i
     global random_moves 
     a2 = int(id)
-    
-         
+    click_check = findBar(board, a2)
+    if click_check.click_status == 1:
+        #if the user clicks already clicked button
+        return    
     if turn == True and moves_left(board) > 0:
             
             #a2 = input(str(agent2.name + "'s move : ")) # minimizer or the human 
