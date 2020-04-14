@@ -8,7 +8,7 @@ MAX = 1000
 a2 = 0
 turn = True 
 clicked = False 
-random_moves = 3
+random_moves = 0
 agent1 = None 
 agent2 = None 
 i = 0
@@ -482,6 +482,10 @@ def findBestMove(board, player, opponent):
                     bar.clicked(player)
                     moveVal = minimax(board, player, opponent, 0, False, MIN, MAX) # starts with false cause it's other persons turn 
                     bar.unclicked()
+                    if moveVal == 10: # since there are only -10, 0, +10 so no need to check other nodes if already we get a +10 from a leaf since we know +10 is the highest 
+                        bestVal = moveVal 
+                        bestBar = bar 
+                        return bestBar.id 
                     if moveVal > bestVal: # compares  the value returned by min max applied on every empty bar
                         bestVal = moveVal
                         bestBar = bar
