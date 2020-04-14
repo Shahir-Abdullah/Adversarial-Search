@@ -24,6 +24,6 @@ last side gets one point.
 3. type 'python3 alpha_beta.py' on the command line.
 
 # Issues : 
-1. Sometimes the game will hang. Because it's 5X5 board and the minmax algorithm takes 5 mins maximum to calculate the optimal value. You can wait or you can just type 'ctrl z' on the command line and quit the program. 
+1. Sometimes the game will hang. Because it's 5X5 board and the minmax algorithm takes 5 seconds maximum to calculate the optimal value. You can wait or you can just type 'ctrl z' on the command line and quit the program. 
 2. If you run the code from vscode, the window won't dissapear after pressing 'ctrl z'. In that case you need to close the vscode program and then the game window will close. Otherwise it will freeze. 
 3. If you face any issues let me know. 
