@@ -118,6 +118,8 @@ def enter_row_column():
     else:
         n = 4 
     '''
+    
+
     bar_id = 1
     total_bars = 60 
     r = r + (r + 1)
@@ -193,15 +195,17 @@ class Agent(object):
         self.score = 0
     def agent_moves(self, moves): #the moves the agent took. not needed now but may in the future 
         self.moves = moves 
-    def total_score(self, board): #returns the total score when the board is given as parameter
+    def total_score(self): #returns the total score when the board is given as parameter
         score = 0
+        global board 
         for box_list in board:
             for box in box_list:
-                truth, bar = box.is_box_complete()
-                if truth == True and bar.clicked_by == self.name:
-                    score += 1
-        self.score = score 
-        return self.score
+                truth, bar_id = box.is_box_complete()
+                if truth == True and bars[bar_id-1].clicked_by == self.name:
+                    score += 1 
+        
+        return score
+
     def set_score(self, score): # set method 
         self.score = score 
 
@@ -228,47 +232,43 @@ class Bar(object):
 
 #Box class
 class Box(object):
-    def __init__(self, box_id, bar_a, bar_b, bar_c, bar_d):
+    def __init__(self, box_id, bar_a_id, bar_b_id, bar_c_id, bar_d_id):
 
-        self.bar_a = bar_a # has 4 Bar objects
-        self.bar_b = bar_b 
-        self.bar_c = bar_c 
-        self.bar_d = bar_d
-        self.bar_list = [self.bar_a, self.bar_b, self.bar_c, self.bar_d] # this is silly, only made to use it when a common task needed to be done on all of it like in the minimax algorithm you will see later
+        self.bar_a_id = bar_a_id # has 4 Bar objects
+        self.bar_b_id = bar_b_id 
+        self.bar_c_id = bar_c_id 
+        self.bar_d_id = bar_d_id
+        self.bar_list = [self.bar_a_id, self.bar_b_id, self.bar_c_id, self.bar_d_id] # this is silly, only made to use it when a common task needed to be done on all of it like in the minimax algorithm you will see later
         self.box_id = box_id # box id if needed 
         self.completed_by = None # the agent's name who got the point of completing the box
  
-    def update_bars(self, bar_a=None, bar_b=None, bar_c=None, bar_d=None): # not using right at this moment
-        if bar_a != None:
-            self.bar_a = bar_a
-        if bar_b != None:
-            self.bar_b = bar_b 
-        if bar_c != None:
-            self.bar_c = bar_c 
-        if bar_d != None:
-            self.bar_d = bar_d
+    def count_unclicked_bars(self):
+        count = 0
+        for bar in self.bar_list:
+            if bars[bar-1].click_status == 0:
+                count += 1
+        return count 
 
     def is_box_complete(self): # method which checks if all the bars have been clicked, if yes then returns True and the last bar to make the box complete
         
-        if self.bar_a.click_status == 1 and self.bar_b.click_status == 1 and self.bar_c.click_status == 1 and self.bar_d.click_status == 1:
+        if bars[self.bar_a_id-1].click_status == 1 and bars[self.bar_b_id-1].click_status == 1 and bars[self.bar_c_id-1].click_status == 1 and bars[self.bar_d_id-1].click_status == 1:
 
-            if self.bar_a.click_moment == max(self.bar_a.click_moment, self.bar_b.click_moment, self.bar_c.click_moment, self.bar_d.click_moment): # the time of clicking the bar is used to find out the last bar clicked 
-                self.completed_by = self.bar_a.clicked_by 
-                return True, self.bar_a 
-            elif self.bar_b.click_moment == max(self.bar_a.click_moment, self.bar_b.click_moment, self.bar_c.click_moment, self.bar_d.click_moment):
-                self.completed_by = self.bar_b.clicked_by 
-                return True, self.bar_b
-            elif self.bar_c.click_moment == max(self.bar_a.click_moment, self.bar_b.click_moment, self.bar_c.click_moment, self.bar_d.click_moment):
-                self.completed_by = self.bar_c.clicked_by 
-                return True, self.bar_c
-            elif self.bar_d.click_moment == max(self.bar_a.click_moment, self.bar_b.click_moment, self.bar_c.click_moment, self.bar_d.click_moment):
-                self.completed_by = self.bar_d.clicked_by 
-                return True, self.bar_d
+            if bars[self.bar_a_id-1].click_moment == max(bars[self.bar_a_id-1].click_moment, bars[self.bar_b_id-1].click_moment, bars[self.bar_c_id-1].click_moment, bars[self.bar_d_id-1].click_moment): # the time of clicking the bar is used to find out the last bar clicked 
+                self.completed_by = bars[self.bar_a_id-1].clicked_by 
+                return True, self.bar_a_id
+            elif bars[self.bar_b_id-1].click_moment == max(bars[self.bar_a_id-1].click_moment, bars[self.bar_b_id-1].click_moment, bars[self.bar_c_id-1].click_moment, bars[self.bar_d_id-1].click_moment): # the time of clicking the bar is used to find out the last bar clicked 
+                self.completed_by = bars[self.bar_b_id-1].clicked_by 
+                return True, self.bar_b_id 
+            elif bars[self.bar_c_id-1].click_moment == max(bars[self.bar_a_id-1].click_moment, bars[self.bar_b_id-1].click_moment, bars[self.bar_c_id-1].click_moment, bars[self.bar_d_id-1].click_moment): # the time of clicking the bar is used to find out the last bar clicked 
+                self.completed_by = bars[self.bar_c_id-1].clicked_by 
+                return True, self.bar_c_id
+            elif bars[self.bar_d_id-1].click_moment == max(bars[self.bar_a_id-1].click_moment, bars[self.bar_b_id-1].click_moment, bars[self.bar_c_id-1].click_moment, bars[self.bar_d_id-1].click_moment): # the time of clicking the bar is used to find out the last bar clicked 
+                self.completed_by = bars[self.bar_d_id-1].clicked_by 
+                return True, self.bar_d_id 
         else:
             return False, None 
 
-    def undo_box_completer(self): # not needed right now, clears the box data
-        self.completed_by = None   
+     
     
     
 
@@ -337,38 +337,38 @@ bars = [
         Bar(60)
 
     ]
+    
+
 # 25 boxes of the board
-b1 = Box(1, bars[0], bars[5], bars[6], bars[11])
-b2 = Box(2, bars[1], bars[6], bars[7], bars[12])
-b3 = Box(3, bars[2], bars[7], bars[8],bars[13])
-b4 = Box(4, bars[3], bars[8], bars[9], bars[14])
-b5 = Box(5, bars[4], bars[9], bars[10], bars[15])
+b1 = Box(1, 1, 6, 7, 12)
+b2 = Box(2, 2, 7, 8, 13)
+b3 = Box(3, 3, 8, 9, 14)
+b4 = Box(4, 4, 9, 10, 15)
+b5 = Box(5, 5, 10, 11, 16)
 
-b6 = Box(6, bars[11], bars[16], bars[17], bars[22])
-b7 = Box(7, bars[12], bars[17], bars[18], bars[23])
-b8 = Box(8, bars[13], bars[18], bars[19], bars[24])
-b9 = Box(9, bars[14], bars[19], bars[20], bars[25])
-b10 = Box(10, bars[15], bars[20], bars[21], bars[26])
+b6 = Box(6, 12, 17, 18, 23)
+b7 = Box(7, 13, 18, 19, 24)
+b8 = Box(8, 14, 19, 20, 25)
+b9 = Box(9, 15, 20, 21, 26)
+b10 = Box(10, 16, 21, 22, 27)
 
-b11 = Box(11, bars[22], bars[27], bars[28], bars[33])
-b12 = Box(12, bars[23], bars[28], bars[29], bars[34])
-b13 = Box(13, bars[24], bars[29], bars[30], bars[35])
-b14 = Box(14, bars[25], bars[30], bars[31], bars[36])
-b15 = Box(15, bars[26], bars[31], bars[32], bars[37])
+b11 = Box(11, 23, 28, 29, 34)
+b12 = Box(12, 24, 29, 30, 35)
+b13 = Box(13, 25, 30, 31, 36)
+b14 = Box(14, 26, 31, 32, 37)
+b15 = Box(15, 27, 32, 33, 38)
 
-b16 = Box(16, bars[33], bars[38], bars[39], bars[44])
-b17 = Box(17, bars[34], bars[39], bars[40], bars[45])
-b18 = Box(18, bars[35], bars[40], bars[41], bars[46])
-b19 = Box(19, bars[36], bars[41], bars[42], bars[47])
-b20 = Box(20, bars[37], bars[42], bars[43], bars[48])
+b16 = Box(16, 34, 39, 40, 45)
+b17 = Box(17, 35, 40, 41, 46)
+b18 = Box(18, 36, 41, 42, 47)
+b19 = Box(19, 37, 42, 43, 48)
+b20 = Box(20, 38, 43, 44, 49)
 
-b21 = Box(21, bars[44], bars[49], bars[50], bars[55])
-b22 = Box(22, bars[45], bars[50], bars[51], bars[56])
-b23 = Box(23, bars[46], bars[51], bars[52], bars[57])
-b24 = Box(24, bars[47], bars[52], bars[53], bars[58])
-b25 = Box(25, bars[48], bars[53], bars[54], bars[59])
-
-
+b21 = Box(21, 45, 50, 51, 56)
+b22 = Box(22, 46, 51, 52, 57)
+b23 = Box(23, 47, 52, 53, 58)
+b24 = Box(24, 48, 53, 54, 59)
+b25 = Box(25, 49, 54, 55, 60)
 
 #board 
 board = ([
@@ -378,185 +378,349 @@ board = ([
     [b16, b17, b18, b19, b20],
     [b21, b22, b23, b24, b25]
 ])
+
+
+
+
 # function that calculate how many moves are left 
-def moves_left(board):
+def moves_left():
         
         moves = 0
         
-        for box_list in board:
-            for box in box_list:
-
-                if box.bar_a.click_status == 0:
-                    moves += 1
-                if box.bar_b.click_status == 0:
-                    moves += 1
-                if box.bar_c.click_status == 0:
-                    moves += 1
-                if box.bar_d.click_status == 0:
-                    moves += 1
-                
+        for bar in bars:
+            if bar.click_status == 0:
+                moves += 1
+         
         return moves 
     
 # bar finding function 
-def findBar(board, id):
+def findBar(id):
     for bar in bars:
         if bar.id == id:
             return bar 
 #evaluation function 
-def board_evaluation(board, player, opponent):
-    if player.total_score(board) > opponent.total_score(board): # win
-        return 10
-    elif player.total_score(board) == opponent.total_score(board): # draw
-        return 0
-    elif player.total_score(board) < opponent.total_score(board): # lose
-        return -10
+def board_evaluation(player, opponent, player_prev_score, opponent_prev_score):
+    '''
+    if player.total_score() + opponent.total_score() == 25:
+        if player.total_score() > player_prev_score: #point increase 
+            return 10
+        elif opponent.total_score() > opponent_prev_score: # opponents point added 
+            return -10
+        elif player.total_score() == player_prev_score: # no point added 
+            if opponent.total_score() > opponent_prev_score: # but opponents benefit
+                return -5
+        else: # opponents draw too 
+                return 0
     else:
-        return None # still game is going on
+        return -1
+    '''
 
+    if player.total_score() + opponent.total_score() == 25:
+        
+        if player.total_score() > opponent.total_score(): #point increase 
+            return 10
+        elif opponent.total_score() > player.total_score(): # opponents point added 
+            return -10
+        
+        else: # draw 
+                return 0
+        
+        #return player.total_score()
+    else:
+        return -1
+
+     
+#pick max bar function that will give maximizer the favor 
+def pickMaxBar():
+    global bars 
+    global agent1 
+    global agent2 
+    global board 
+    #maximizer can get a point
+    for bar in bars:
+        if bar.click_status == 0:
+            prev_score = agent1.total_score()
+            bar.clicked(agent1) # agent1 is the maximizer
+            cur_score = agent1.total_score()
+
+            if cur_score > prev_score:
+                bar.unclicked()
+                return bar 
+            else:
+                bar.unclicked()
+
+    #maximizer can't get a point but can pick a bar which will not help minimizer to get a point
+    for box_list in board:
+        for box in box_list:
+            if box.count_unclicked_bars() > 2:
+
+                if bars[box.bar_a_id-1].click_status == 0:
+                    prev_score_opponent = agent2.total_score()
+                    bars[box.bar_a_id-1].clicked(agent2)
+                    cur_score_opponent = agent2.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_a_id-1].unclicked()
+                        return bars[box.bar_a_id-1]
+                    else:
+                        bars[box.bar_a_id-1].unclicked()
+                    
+                if bars[box.bar_b_id-1].click_status == 0:
+                    prev_score_opponent = agent2.total_score()
+                    bars[box.bar_b_id-1].clicked(agent2)
+                    cur_score_opponent = agent2.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_b_id-1].unclicked()
+                        return bars[box.bar_b_id-1]
+                    else:
+                        bars[box.bar_b_id-1].unclicked()
+
+                if bars[box.bar_c_id-1].click_status == 0:
+                    prev_score_opponent = agent2.total_score()
+                    bars[box.bar_c_id-1].clicked(agent2)
+                    cur_score_opponent = agent2.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_c_id-1].unclicked()
+                        return bars[box.bar_c_id-1]
+                    else:
+                        bars[box.bar_c_id-1].unclicked()
+
+                if bars[box.bar_d_id-1].click_status == 0:
+                    prev_score_opponent = agent2.total_score()
+                    bars[box.bar_d_id-1].clicked(agent2)
+                    cur_score_opponent = agent2.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_d_id-1].unclicked()
+                        return bars[box.bar_d_id-1]
+                    else:
+                        bars[box.bar_d_id-1].unclicked()
+
+    # maximizer can't get a point and also can't find a bar which will not help minimizer so it will use strategic moves 
+    for bar in bars:
+        if bar.click_status == 0:
+            return bar 
+        
+        
+    #no unclicked bar left 
+    return None             
+    
+         
+#pick min bar function that will give minimizer the favor
+def pickMinBar():
+    global bars 
+    global agent1 
+    global agent2 
+    global board 
+    #minimizer can get a point
+    for bar in bars:
+        if bar.click_status == 0:
+            prev_score = agent2.total_score()
+            bar.clicked(agent2) # agent2 is the minimizer
+            cur_score = agent2.total_score()
+
+            if cur_score > prev_score:
+                bar.unclicked()
+                return bar 
+            else:
+                bar.unclicked()
+
+    #minimizer can't get a point but can pick a bar which will not help maximizer to get a point
+    for box_list in board:
+        for box in box_list:
+            if box.count_unclicked_bars() > 2:
+
+                if bars[box.bar_a_id-1].click_status == 0:
+                    prev_score_opponent = agent1.total_score()
+                    bars[box.bar_a_id-1].clicked(agent1)
+                    cur_score_opponent = agent1.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_a_id-1].unclicked()
+                        return bars[box.bar_a_id-1]
+                    else:
+                        bars[box.bar_a_id-1].unclicked()
+                    
+                if bars[box.bar_b_id-1].click_status == 0:
+                    prev_score_opponent = agent1.total_score()
+                    bars[box.bar_b_id-1].clicked(agent1)
+                    cur_score_opponent = agent1.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_b_id-1].unclicked()
+                        return bars[box.bar_b_id-1]
+                    else:
+                        bars[box.bar_b_id-1].unclicked()
+
+                if bars[box.bar_c_id-1].click_status == 0:
+                    prev_score_opponent = agent1.total_score()
+                    bars[box.bar_c_id-1].clicked(agent1)
+                    cur_score_opponent = agent1.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_c_id-1].unclicked()
+                        return bars[box.bar_c_id-1]
+                    else:
+                        bars[box.bar_c_id-1].unclicked()
+
+                if bars[box.bar_d_id-1].click_status == 0:
+                    prev_score_opponent = agent1.total_score()
+                    bars[box.bar_d_id-1].clicked(agent1)
+                    cur_score_opponent = agent1.total_score()
+                    if prev_score_opponent == cur_score_opponent:
+                        bars[box.bar_d_id-1].unclicked()
+                        return bars[box.bar_d_id-1]
+                    else:
+                        bars[box.bar_d_id-1].unclicked()
+
+    # minimizer can't get a point and also can't find a bar which will not help maximizer
+    for bar in bars:
+        if bar.click_status == 0:
+            return bar 
 
 '''
 the famous minimax alpha beta pruning. 
 maximizer wants to increase the alpha as much as it can without crossing the beta from previous node. 
 minimizer wants to decrease the beta as much as it can without going below alpha from previous node. 
 '''
-def minimax(board, player, opponent, depth, isMax, alpha, beta):
-    score = board_evaluation(board, player, opponent)
+def minimax(player, opponent, depth, isMax, alpha, beta, player_prev_score, opponent_prev_score):
 
-    if score == 10 or score == -10:
+    #print(" moves left ", moves_left())
+    
+    score = board_evaluation(player, opponent, player_prev_score, opponent_prev_score)
+    if score == 10 or score == -10 or score == 0: # leaf node 
+        #print("----- score ------ : ", score, " -----moves left----- ", moves_left(), "------depth------", depth)
         return score 
-    if moves_left(board) == 0:
-        return 0
+    else:
+    #print("Depth is ", depth, " moves left ", moves_left(board))
 
-    if isMax == True:
-        best = MIN
-        for box_list in board:
-            for box in box_list:
-                for bar in box.bar_list:
-                    if bar.click_status == 0: 
-                        bar.clicked(player) # clicks an untouched bar and then puts the board into minimax to see what is the end result. does that for every unclicked bar and then selects the best outcome bar
-                        best = max(best, minimax(board, player, opponent, depth+1, not isMax, alpha, beta))
-                        alpha = max(alpha, best) # alpha is the best value it gets 
-                        bar.unclicked() # undo the click status because it was a simulation for calculating the utility it's not a move 
-                        if beta <= alpha:
-                            '''
-                            if the alpha gets over the beta given from the prev min layer 
-                            that means that min layer will never choose this alpha cause it won't let maximizer win 
-                            and let the game go onto an end result where maximizer tops minimizer level. 
-                            that's why the loop aborts cause the best result won't happen
-                            so why bother calculating the rest of the nodes in that branch 
+        if isMax == True:
+            best = MIN
+            bar = pickMaxBar()
+            if bar == None:
+                return alpha 
+            player_prev_score = player.total_score()
+            opponent_prev_score = opponent.total_score()
+            bar.clicked(player) # clicks an untouched bar and then puts the board into minimax to see what is the end result. does that for every unclicked bar and then selects the best outcome bar                        value =  minimax(board, player, opponent, depth+1, not isMax, alpha, beta)
+            value =  minimax(player, opponent, depth+1, False, alpha, beta, player_prev_score, opponent_prev_score)
+            
+            best = max(best, value)
+            alpha = max(alpha, best) # alpha is the best value it gets 
+            #print("alpha change hoise", alpha, " beta ", beta, " best ", best," depth is ", depth)
+            bar.unclicked() # undo the click status because it was a simulation for calculating the utility it's not a move 
+            if beta <= alpha:
+                print("alpha corssed beta in max level so returning best value ", best)
+                return best  
+                '''
+                if the alpha gets over the beta given from the prev min layer 
+                that means that min layer will never choose this alpha cause it won't let maximizer win 
+                and let the game go onto an end result where maximizer tops minimizer level. 
+                that's why the loop aborts cause the best result won't happen
+                so why bother calculating the rest of the nodes in that branch 
 
-                                    min <= 5 // after completing left brach this level knows it will get maximum 5 as it is min level 
-                                        / \ 
-                                max =  5   max >= 6 // so after knowing that this level will generate at least 6 the upper level won't come here cause it already know if it choses left it will get at best 5. that why it will return from max level getting best result 6 which will be eventually discarded since uper level's beta is 5
-                                      / \  /  \ 
-                                     3  5  6  (this won't even be counted, even if it was 1, becasue max would never chosse it)
-                            
-                            
-                            '''
-                            return best # return value 6 according to the above example 
-                           
+                              min <= 5 // after completing left brach this level knows it will get maximum 5 as it is min level 
+                              / \ 
+                          max=5 max >= 6 // so after knowing that this level will generate at least 6 the upper level won't come here cause it already know if it choses left it will get at best 5. that why it will return from max level getting best result 6 which will be eventually discarded since uper level's beta is 5
+                          / \  /  \ 
+                         3  5  6  (this won't even be counted, even if it was 1, becasue max would never chosse it)  
+
+                '''
                         
-        return best 
-    else: # min level calculation here beta will try to decrease as much as it can without going below the alpha level provide by the upper Max level, cause if if goes below alpha the max level won't come to this branch. 
-        best = MAX
-        for box_list in board:
-            for box in box_list:
-                for bar in box.bar_list:
-                    if bar.click_status == 0:
-                        bar.clicked(player)
-                        best = min(best, minimax(board, player, opponent, depth+1, not isMax, alpha, beta))
-                        beta = min(beta, best)
-                        bar.unclicked()
-                        if beta <= alpha:
-                            return best 
-        return best
+            
+            print("best value from max ", best)
+            return best 
+
+        else: # min level calculation here beta will try to decrease as much as it can without going below the alpha level provide by the upper Max level, cause if if goes below alpha the max level won't come to this branch. 
+            best = MAX
+            bar = pickMinBar()
+            if bar == None:
+                return beta  
+            player_prev_score = player.total_score()
+            opponent_prev_score = opponent.total_score()
+            
+            bar.clicked(opponent)
+            value =  minimax(player, opponent, depth+1, True, alpha, beta, player_prev_score, opponent_prev_score)
+        
+            best = min(best, value)
+            beta = min(beta, best)
+            #print("beta change hoise : ", beta, "alpha", alpha, " best ", best, " depth is ", depth)
+            bar.unclicked()
+            if beta <= alpha:
+                print(" .............................. beta <= alpha hoye gese from min so best value ", best) 
+                return best  
+            
+            
+            
+            print("best value from min ", best)                   
+            return best
 
 
 #will return the bar id    
 # this funciton actually tells the AI what move should it take. 
 # it call minmax for every bar and then calculates the value returned by the minmax. the move with the highest score then gets executed             
-def findBestMove(board, player, opponent):
+def findBestMove(player, opponent):
     bestVal = MIN
     bestBar = None 
-    for box_list in board:
-        for box in box_list:
-            for bar in box.bar_list:
-                if bar.click_status == 0:
-                    bar.clicked(player)
-                    moveVal = minimax(board, player, opponent, 0, False, MIN, MAX) # starts with false cause it's other persons turn 
-                    bar.unclicked()
-                    if moveVal == 10: # since there are only -10, 0, +10 so no need to check other nodes if already we get a +10 from a leaf since we know +10 is the highest 
-                        bestVal = moveVal 
-                        bestBar = bar 
-                        return bestBar.id 
-                    if moveVal > bestVal: # compares  the value returned by min max applied on every empty bar
-                        bestVal = moveVal
-                        bestBar = bar
-    
-
-    return bestBar.id # returns the bar that gives the best optimal move 
+    for bar in bars:
+        if bar.click_status == 0:
+            bar.clicked(player)
+            player_prev_score = player.total_score()
+            opponent_prev_score = opponent.total_score()
+            moveVal = minimax(player, opponent, 0, False, MIN, MAX, player_prev_score, opponent_prev_score) # starts with false cause it's other persons turn 
+            bar.unclicked()
+            if moveVal > bestVal: # compares  the value returned by min max applied on every empty bar
+                bestVal = moveVal
+                bestBar = bar
+                #print("ber hoite partesina")
+    if bestBar != None:
+        print("for bar id ", bestBar.id, " best value is ----- > ", bestVal)
+        return bestBar.id # returns the bar that gives the best optimal move
+    else:
+        return -1 
                         
-def randomMove(board, player, opponent):
-    for box_list in board:
-        for box in box_list:
-            if box.bar_a.click_status == 0:
-                return box.bar_a.id    
+def randomMove(player, opponent):
+    for bar in bars:
+        if bar.click_status == 0:
+            return bar.id    
     
 # state class. which has a board, and the next state generation function 
 class State(object):
-    def __init__(self, board, bars):
-        self.board = board
-        self.total_box = len(board) * len(board[0]) # keeps the count of boxes in the board 
-        self.total_sides = len(bars) # sides or bars 
-        self.bars = bars 
-
+    
     def next_state(self, bar_id, agent): # when an bar id is given, the next_state generates the board with updating the click status of the given bar id and returns the board 
-        
-        for box_list in self.board:
+        global board 
+
+        for box_list in board:
             for box in box_list:
                 
-                if box.bar_a.id == bar_id:
-                    if box.bar_a.click_status == 0:
-                        box.bar_a.clicked(agent)
-                        #print("-------> clicked by ", box.bar_a.clicked_by)
-                    else:
-                        pass 
-                        #print("Bar Already clicked")
-                if box.bar_b.id == bar_id:
-                    if box.bar_b.click_status == 0:
-                        box.bar_b.clicked(agent)
-                        #print("-------> clicked by ", box.bar_b.clicked_by)
-                    else:
-                        pass 
-                        #print("Bar Already clicked")
-                if box.bar_c.id == bar_id:
-                    if box.bar_c.click_status == 0:
-                        box.bar_c.clicked(agent)
-                        #print("-------> clicked by ", box.bar_c.clicked_by)
-                    else:
-                        pass 
-                        #print("Bar Already clicked")
-                if box.bar_d.id == bar_id:
-                    if box.bar_d.click_status == 0:
-                        box.bar_d.clicked(agent)
-                        #print("-------> clicked by ", box.bar_d.clicked_by)
-                    else:
-                        pass 
-                        #print("Bar Already clicked")
+                if box.bar_a_id == bar_id:
+                    if bars[box.bar_a_id-1].click_status == 0:
+                        bars[box.bar_a_id-1].clicked(agent)
+                        #print("-------> clicked by ", bars[box.bar_a_id-1].clicked_by)
+                    
+                if box.bar_b_id == bar_id:
+                    if bars[box.bar_b_id-1].click_status == 0:
+                        bars[box.bar_b_id-1].clicked(agent)
+                        #print("-------> clicked by ", bars[box.bar_b_id-1].clicked_by)
+                    
+                if box.bar_c_id == bar_id:
+                    if bars[box.bar_c_id-1].click_status == 0:
+                        bars[box.bar_c_id-1].clicked(agent)
+                        #print("-------> clicked by ", bars[box.bar_c_id-1].clicked_by)
+                    
+                if box.bar_d_id == bar_id:
+                    if bars[box.bar_d_id-1].click_status == 0:
+                        bars[box.bar_d_id-1].clicked(agent)
+                        #print("-------> clicked by ", bars[box.bar_d_id-1].clicked_by)
+                    
                 
-                t, win_bar = box.is_box_complete() # tells if a box has been completed with the agent name 
+                t, win_bar_id = box.is_box_complete() # tells if a box has been completed with the agent name 
                 if t == True:
-                    if win_bar.clicked_by == agent1.name:
+                    if bars[win_bar_id-1].clicked_by == agent1.name:
                         gui_box[box.box_id]["bg"] = box_complete_color_by_AI
-                    elif win_bar.clicked_by == agent2.name:
+                    elif bars[win_bar_id-1].clicked_by == agent2.name:
                         gui_box[box.box_id]["bg"] = box_complete_color_by_Human
-                    #print("=============> One point by ", win_bar.clicked_by, " box id ", box.box_id)
+                    print("=============> One point by ", bars[win_bar_id-1].clicked_by, " box id ", box.box_id)
                     t = False
                     
         
-        return self, self.board
+        return self, board
 #initializatoin of state
-s = State(board, bars)
+s = State()
 
 #change bar color
 def change_color(id, agent):
@@ -570,17 +734,13 @@ def change_color(id, agent):
             b["bg"] = clicked_bar_color_human
             #print("changing color")
             return  
-def show_bars(board):
+def show_bars():
+    global board 
     for box_list in board:
+        print(" layer -------------------- ")
         for box in box_list:
-            if box.bar_a.click_status == 1:
-                print(box.bar_a.id)
-            if box.bar_b.click_status == 1:
-                print(box.bar_b.id)
-            if box.bar_c.click_status == 1:
-                print(box.bar_c.id)
-            if box.bar_d.click_status == 1:
-                print(box.bar_d.id)
+    
+            print(box.bar_a.click_status, box.bar_b.click_status, box.bar_c.click_status, box.bar_d.click_status)
 
 #click function by human
 def bar_click_human(id):
@@ -590,20 +750,20 @@ def bar_click_human(id):
     global i
     global random_moves 
     a2 = int(id)
-    click_check = findBar(board, a2)
+    click_check = findBar(a2)
     if click_check.click_status == 1:
-        #if the user clicks already clicked button
+        #if the user clicks an already clicked button
         return    
-    if turn == True and moves_left(board) > 0:
+    if turn == True and moves_left() > 0:
             
             #a2 = input(str(agent2.name + "'s move : ")) # minimizer or the human 
             #a2 = int(a2)
             #print("human's turn")
-            agent_prev_score = agent2.total_score(board)
+            agent_prev_score = agent2.total_score()
             s, board = s.next_state(a2, agent2)
             #show_bars(board)
             change_color(id, agent2)
-            agent_current_score = agent2.total_score(board)
+            agent_current_score = agent2.total_score()
             
             if agent_current_score == agent_prev_score:
                 turn = False 
@@ -612,48 +772,55 @@ def bar_click_human(id):
                 lbl_game_result["text"] = "Your turn"  
             #print("moves left ======> ", moves_left(board)) 
 
-    if turn == False and moves_left(board) > 0: # turn value tells whose turn it is. normally it will flip each time except when a player gets a box complete and then he can again make a move. that's when turn bool doesn't get flipped and lets the agent take a move again
+    if turn == False and moves_left() > 0: # turn value tells whose turn it is. normally it will flip each time except when a player gets a box complete and then he can again make a move. that's when turn bool doesn't get flipped and lets the agent take a move again
             #print("ai's turn", i)
-            while turn == False and moves_left(board) > 0:
+            while turn == False and moves_left() > 0:
+                print("still in while loop")
                 lbl_game_result["text"] = "AI's turn"
                 if i <= random_moves:
-                    a1 = randomMove(board, agent1, agent2)
+                    a1 = randomMove(agent1, agent2)
                     
                     a1 = int(a1)
                     i += 1
                     #print("---------------------------------------- i = ", i)
                 else:
-                    a1 = findBestMove(board, agent1, agent2) # maximizer which here is the AI 
+                    a1 = findBestMove(agent1, agent2) # maximizer which here is the AI 
                     
                     a1 = int(a1)
+                    if a1 == -1:
+                        break #game ends 
                 #print(a1)
                 change_color(str(a1), agent1)
-                agent_prev_score = agent1.total_score(board)
+                agent_prev_score = agent1.total_score()
                 s, board = s.next_state(a1, agent1)
                 
                 #show_bars(board)
-                agent_current_score = agent1.total_score(board)
+                agent_current_score = agent1.total_score()
                 if agent_current_score == agent_prev_score: # finds out if the agent got a point by comparing the prev and current score, if changes that means the turn bool won't flip 
                     turn = True
+                    print("na ber hoite parsi score : ", agent_current_score)
                     lbl_game_result["text"] = "Your turn"
-                else:
+                    break 
+                    
+                elif agent_current_score > agent_prev_score:
                     lbl_game_result["text"] = "AI's turn" 
+                    print("ber hoite pari nai prev score : ", agent_prev_score, " current score : ", agent_current_score)
                #print("moves left ======> ", moves_left(board)) 
                  
-    if moves_left(board) == 0: # compilation of the game result. 
+    if moves_left() == 0: # compilation of the game result. 
         lbl_game_result["text"] = "GAME OVER"
         time_to_sleep.sleep(2.0)
-        if agent1.total_score(board) < agent2.total_score(board):
+        if agent1.total_score() < agent2.total_score():
             lbl_game_result["text"] = "You Win!"
-        elif agent1.total_score(board) > agent2.total_score(board):
+        elif agent1.total_score() > agent2.total_score():
             lbl_game_result["text"] = "AI Wins!"
         else:
             lbl_game_result["text"] = "It's a Draw"
 
     
         
-    lbl_point_table_player1["text"] = str(agent1.total_score(board))
-    lbl_point_table_player2["text"] = str(agent2.total_score(board))
+    lbl_point_table_player1["text"] = str(agent1.total_score())
+    lbl_point_table_player2["text"] = str(agent2.total_score())
     #print(id, "returned", turn)
 
 
